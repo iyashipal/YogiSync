@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Chat - Yoga App</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Open Sans', sans-serif;
+      background: #f2f2f2;
+      color: #333;
+      padding-top: 60px; /* space for fixed navbar */
+    }
+    .navbar {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1200;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    /* Modal overlay for the questionnaire */
+    #questionnaireModal {
+      position: fixed;
+      top: 60px;
+      left: 0;
+      width: 100%;
+      height: calc(100% - 60px);
+      background: rgba(0, 0, 0, 0.2);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      animation: fadeIn 0.5s ease;
+    }
+    #questionnaireContainer {
+      background: #fff;
+      padding: 40px 30px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    .questionText {
+      font-size: 1.4em;
+      margin-bottom: 20px;
+      font-weight: 600;
+      color: #444;
+    }
+    .optionButton {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      background: #A3B290;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1em;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+    .optionButton:hover {
+      background: #3D5C50;
+      transform: scale(1.02);
+    }
+    /* Container for the final report */
+    #reportDisplay {
+      display: none;
+      margin: 20px auto;
+      max-width: 900px; /* Slightly wider for comfort */
+      position: relative;
+    }
+    /* Fade-in animation */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="{{ url_for('index') }}">
+        <img src="{{ url_for('static', filename='Screenshot (514).png') }}" 
+             alt="Yoga Logo" width="55" height="50" class="d-inline-block align-text-bottom">
+        <span style="color: #A3B290; font-weight:bolder;">YogiSync</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
+              data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" 
+              aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ms-auto me-4">
+          <li class="nav-item"><a class="nav-link active" href="{{ url_for('index') }}">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('practice') }}">Workouts</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('show_playlist') }}">Playlist</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('chat') }}">AI-Coach</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Optional pink banner -->
+  <div class="container-fluid text-white p-4" style="background-color: #FFB3A7; opacity: 60%;">
+    <!-- Banner content here -->
+  </div>
+
+  <!-- Modal for questionnaire -->
+  <div id="questionnaireModal">
+    <div id="questionnaireContainer">
+      <div id="questionText" class="questionText"></div>
+      <div id="routineContainer" style="display:none;"></div>
+      <div id="optionsContainer"></div>
+    </div>
+  </div>
+
+  <!-- Final Report Container -->
+  <div id="reportDisplay"></div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    // Example question data
+    const questions = [
+      { question: "What is your age range?", key: "age_range", options: ["18-25", "26-35", "36-45", "46-60", "60+"] },
+      { question: "What is your gender?", key: "gender", options: ["Male", "Female", "Other"] },
+      { question: "What is your height? (e.g., 170 cm or 5'7\")", key: "height", options: ["150-160 cm", "161-170 cm", "171-180 cm", "181-190 cm", "190+ cm"] },
+      { question: "What is your weight? (e.g., 70 kg or 154 lbs)", key: "weight", options: ["Below 50 kg", "50-60 kg", "61-70 kg", "71-80 kg", "81-90 kg", "90+ kg"] },
+      { question: "Which is your primary goal?", key: "primary_goal", options: ["Weight Loss", "Muscle Build", "Cardio/Endurance"] },
+      { question: "What is your current fitness level?", key: "fitness_level", options: ["Beginner", "Intermediate", "Advanced"] },
+      { question: "What is your current activity level?", key: "activity_level", options: ["Sedentary", "Lightly Active", "Moderately Active", "Very Active"] },
+      { question: "What are your current eating habits?", key: "current_eating_habits", options: ["Breakfast, Lunch, Dinner", "3 Meals + Snacks", "2 Meals/Day", "1 Meal/Day"] },
+      { question: "What are your goals for eating habits?", key: "eating_goals", options: ["More Protein", "More Fiber", "Less Calories", "Balanced Macros"] },
+      { question: "Do you have any dietary preferences or restrictions?", key: "dietary_restrictions", options: ["Vegetarian", "Vegan", "Gluten-Free", "No Dairy", "No specific diet"] },
+      { question: "How many weeks do you want to work on your routine?", key: "weeks", options: ["2 weeks", "4 weeks", "8 weeks", "12 weeks"] },
+      { question: "What is your current workout status?", key: "workout_status", options: ["Never workout", "2-3 days/week", "4-5 days/week", "Daily"] },
+      { question: "How long do you want to workout daily?", key: "workout_duration", options: ["10 minutes/day", "20 minutes/day", "30 minutes/day", "45+ minutes/day"] },
+      { question: "Do you have any health concerns or injuries?", key: "health_concerns", options: ["No", "Yes, minor", "Yes, major"] }
+    ];
+
+
+    let currentQuestionIndex = 0;
+    const answers = {};
+    let reportHTML = "";
+
+    const questionTextElem = document.getElementById("questionText");
+    const optionsContainer = document.getElementById("optionsContainer");
+    const questionnaireModal = document.getElementById("questionnaireModal");
+    const reportDisplay = document.getElementById("reportDisplay");
+
+    function showQuestion(index) {
+      const currentQuestion = questions[index];
+      questionTextElem.textContent = currentQuestion.question;
+      optionsContainer.innerHTML = "";
+
+      currentQuestion.options.forEach(option => {
+        const button = document.createElement("button");
+        button.textContent = option;
+        button.className = "optionButton";
+        button.addEventListener("click", () => {
+          answers[currentQuestion.key] = option;
+          currentQuestionIndex++;
+          if (currentQuestionIndex < questions.length) {
+            showQuestion(currentQuestionIndex);
+          } else {
+            generateRoutine();
+          }
+        });
+        optionsContainer.appendChild(button);
+      });
+    }
+
+    function generateRoutine() {
+      questionTextElem.textContent = "Generating your personalized yoga routine...";
+      optionsContainer.innerHTML = "";
+
+      fetch("/generate_routine", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(answers)
+      })
+      .then(response => response.json())
+      .then(data => {
+        // Insert a small download button at top-right inside the final card
+        const smallDownloadBtn = `
+          <button id="smallDownloadBtn"
+            class="btn btn-sm"
+            style="
+              position: absolute;
+              top: 50px;
+              right: 50px;
+              background: #0096C7;
+              color: #fff;
+              border: none;
+              border-radius: 4px;
+              font-size: 0.8rem;
+              padding: 0.4rem 0.6rem;
+              z-index: 999;
+            "
+          >
+            Download PDF
+          </button>
+        `;
+
+        // A visually appealing card layout for the final report
+        const cardStart = `
+          <div class="card shadow bg-light border-0" style="margin: 0; padding: 0;">
+            <div class="card-body p-4" style="position: relative;">
+              ${smallDownloadBtn}
+        `;
+        const cardEnd = `
+            </div>
+          </div>
+        `;
+
+        // A colored header banner inside the card
+        const bannerHTML = `
+          <div class="text-center p-3 mb-4" style="background-color: #B2A17E; color: #fff; border-radius: .5rem;">
+            <h2 class="m-0">Yoga &amp; Fitness Plan Report</h2>
+          </div>
+        `;
+
+        // Style the routine text with better spacing
+        const routineHTML = `
+          <div style="margin-top: 1rem; font-size: 1.1rem; line-height: 1.7; color: #555;">
+            ${data.routine}
+          </div>
+        `;
+
+        const customLayoutHTML = `
+          <div class="container py-4" style="max-width: 900px;">
+            ${cardStart}
+              ${bannerHTML}
+              ${routineHTML}
+            ${cardEnd}
+          </div>
+        `;
+
+        reportHTML = customLayoutHTML;
+
+        questionTextElem.textContent = "Your report is ready!";
+        const viewButton = document.createElement("button");
+        viewButton.textContent = "View Your Report";
+        viewButton.className = "optionButton";
+        viewButton.addEventListener("click", () => {
+          questionnaireModal.style.display = "none";
+          reportDisplay.innerHTML = reportHTML;
+          reportDisplay.style.display = "block";
+
+          document
+            .getElementById("smallDownloadBtn")
+            .addEventListener("click", downloadReport);
+        });
+        optionsContainer.innerHTML = "";
+        optionsContainer.appendChild(viewButton);
+      })
+      .catch(error => {
+        questionTextElem.textContent = "Sorry, there was an error generating your routine.";
+        console.error("Error:", error);
+      });
+    }
+
+    function downloadReport() {
+      const element = document.getElementById("reportDisplay");
+      const opt = {
+        margin: 0.5,
+        filename: 'Yoga_Plan_Report.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+      };
+      html2pdf().set(opt).from(element).save();
+    }
+
+    // Start
+    showQuestion(currentQuestionIndex);
+  </script>
+</body>
+</html>

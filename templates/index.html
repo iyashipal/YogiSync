@@ -1,0 +1,218 @@
+{% extends 'base.html' %}
+{% block title %}Home - Yoga App{% endblock %}
+
+{% block content %}
+<!-- Optional Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light" style="box-shadow: 0 12px 10px rgba(0,0,0,0.2);">
+  <div class="container-fluid">
+    <!-- Logo / Brand -->
+    <a class="navbar-brand" href="{{ url_for('index') }}">
+      <img src="{{ url_for('static', filename='Screenshot (514).png') }}" 
+           alt="Yoga Logo" width="55" height="50" class="d-inline-block align-text-bottom">
+      <span style="color: #A3B290; font-weight: bold;">YogiSync</span>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ms-auto me-4">
+        <li class="nav-item">
+          <a class="nav-link active" href="{{ url_for('index') }}">Home</a> 
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('practice') }}">Workouts</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('show_playlist') }}">Playlist</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('chat') }}">AI-Coach</a>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container-fluid text-white p-3" style="background-color: #FFB3A7; padding-top: 50px; opacity: 60%;">
+  <!-- Your banner content here -->
+</div>
+
+<!-- Hero Section -->
+<div class="row align-items-center" style="box-shadow: 0 4px 8px rgba(0,0,0,0.2); padding: 50px 140px;">
+  <!-- Left Side: Text -->
+  <div class="col-md-6 mb-4 mb-md-0">
+    <h1 class="display-4 fw-bold">Discover the Path to Wellness</h1>
+    <p class="lead">
+      Welcome to our Yoga App! Improve flexibility, balance, and mind-body harmony.
+    </p>
+    <a href="{{ url_for('practice') }}" class="btn btn-primary btn-lg mt-2" style="background-color: #A3B290; border-color: transparent;">
+      Start Practicing
+    </a>
+  </div>
+  <!-- Right Side: Lottie Animation -->
+  <div class="col-md-6 text-center">
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <lottie-player
+      src="https://assets1.lottiefiles.com/packages/lf20_kkflmtur.json"
+      background="transparent"
+      speed="1"
+      style="width: 100%; height: 100%;"
+      loop
+      autoplay>
+    </lottie-player>
+  </div>
+</div>
+<div class="container-fluid text-white p-3" style="background-color: #FFB3A7; padding-top: 50px; opacity: 60%;">
+  <!-- Your banner content here -->
+</div>
+<!-- Info / Features Section -->
+ 
+<div class="row text-center" style="padding: 50px 100px;">
+  <div class="content">
+    <h3 style="padding-top: 30px;" class="section-title">"WHERE TECHNOLOGY MEETS TRANQUILLITY"</h3>
+    <p class="section-text" style="padding-top: 20px;">
+      Our app leverages cutting-edge AI-powered posture detection to help you achieve the perfect pose, enhance flexibility, and deepen your holistic well-being. Whether you're a beginner or an experienced yogi, our intelligent features provide real-time feedback to guide your form, prevent injuries, and maximize your practice's benefits.
+    </p>
+    <img src="{{ url_for('static', filename='lotus (1).png') }}" 
+         alt="Lotus Icon" style="width:170px; height: 170px; opacity: 50%;" class="mb-3">
+</div>
+
+
+
+<div class="container-fluid p-0">
+  <hr
+  style="
+    width: 100vw;
+    margin-left: calc(50% - 50vw); 
+    border: 1px solid #302f2f;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+  "
+/>
+</div>
+
+  <div class="col-md-4 mb-4" style="padding-top: 80px; padding-bottom: 30px;">
+    <img src="{{ url_for('static', filename='1.png') }}" 
+         alt="Pose Icon" style="width:130px; height: 130px;" class="mb-3">
+    <h3>Perfect Your Posture</h3>
+    <p>Real-time AI-powered pose detection to enhance your alignment and form.</p>
+  </div>
+  <div class="col-md-4 mb-4" style="padding-top: 80px;">
+    <img src="{{ url_for('static', filename='2.png') }}" 
+         alt="Timer Icon" style="width:130px; height: 130px;" class="mb-3">
+    <h3>Smart Yoga Guide</h3>
+    <p>Chat with your AI assistant for personalized yoga tips and guidance.</p>
+  </div>
+  <div class="col-md-4 mb-4" style="padding-top: 80px;">
+    <img src="{{ url_for('static', filename='3a.png') }}" 
+         alt="Community Icon" style="width:130px; height: 130px;" class="mb-3">
+    <h3>Your Personalized Flow</h3>
+    <p>Create and customize playlists to match your yoga practice and mood.</p>
+  </div>
+</div>
+
+<div class="container-fluid text-white p-3" style="background-color: #FFB3A7; padding-top: 50px; opacity: 60%;">
+  <!-- Your banner content here -->
+</div>
+
+<div class="row text-center" style="padding: 30px 80px;">
+  <p class="lead" style="font-weight: 500; text-align: center;">
+    <h3>GET A CUSTOM FINTESS & NUTRITION PLAN!</h3>
+  </p>
+  <p class="section-text" style="padding-top: 20px; padding-bottom: 30px;">
+    Our AI-powered yoga app helps you perfect your poses, improve flexibility, and prevent injuries with real-time posture detection and smart corrections. Whether you're a beginner or advanced, it offers customized routines, progress tracking, and guided mindfulness. Beyond yoga, our AI analyzes your responses to create personalized diet plans and fitness reports, helping you build strength, enhance flexibility, and achieve overall wellness. With intelligent insights and tailored recommendations, your journey to better health starts here!  </p>
+    <div class="text-center">
+      <a href="{{ url_for('chat') }}" 
+         class="btn btn-primary mt-2" 
+         style="background-color: #A3B290; border-color: transparent; width: auto; padding: 0.5rem 2rem;">
+        AI-Coach
+      </a>
+    </div>
+    
+
+
+</div>
+<div class="container-fluid text-white p-3" style="background-color: #FFB3A7; padding-top: 50px; opacity: 60%;">
+  <!-- Your banner content here -->
+</div>
+
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+$(document).ready(function(){
+  // Helper: Convert markdown-style bold (**text**) to <strong> tags
+  function formatMessage(text) {
+    return text.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+  }
+
+  // Append a message to the inline chat container.
+  function appendInlineMessage(text, sender) {
+    const msgDiv = $("<div></div>").addClass("mb-2");
+    msgDiv.html(formatMessage(text));
+    
+    if(sender === "user"){
+      msgDiv.css({"text-align": "right", "color": "#333"});
+    } else {
+      msgDiv.css({"text-align": "left", "color": "#555"});
+      // If the bot message includes "[Add to Playlist]", add the button.
+      if(text.includes("[Add to Playlist]")){
+        const addBtn = $("<button></button>")
+                        .addClass("add-btn")
+                        .text("Add to Playlist")
+                        .click(function(){
+                          const match = text.match(/\*\*(.*?)\*\*/);
+                          const poseName = match ? match[1].trim() : "Unknown Pose";
+                          $.ajax({
+                            url: "/api/add_to_playlist",
+                            method: "POST",
+                            contentType: "application/json",
+                            data: JSON.stringify({ pose: poseName }),
+                            success: function(response){
+                              alert("Added to playlist!");
+                            },
+                            error: function(err){
+                              console.error("Error adding to playlist:", err);
+                              alert("Error adding to playlist.");
+                            }
+                          });
+                        });
+        msgDiv.append("<br>").append(addBtn);
+      }
+    }
+    $("#chat").append(msgDiv);
+    $("#chat").scrollTop($("#chat")[0].scrollHeight);
+  }
+
+  // Send inline chat message function
+  $("#sendButton").click(function(){
+    const message = $("#messageInput").val().trim();
+    if(!message) return;
+    appendInlineMessage(message, "user");
+    $("#messageInput").val("");
+    $.ajax({
+      url: "/api/chat",
+      method: "POST",
+      contentType: "application/json",
+      data: JSON.stringify({ message: message }),
+      success: function(data) {
+        appendInlineMessage(data.reply, "bot");
+      },
+      error: function() {
+        appendInlineMessage("I'm sorry, I'm having trouble responding right now.", "bot");
+      }
+    });
+  });
+
+  // Allow Enter key to send chat message
+  $("#messageInput").keypress(function(e){
+    if(e.which === 13){
+      $("#sendButton").click();
+      return false;
+    }
+  });
+});
+</script>
+{% endblock %}

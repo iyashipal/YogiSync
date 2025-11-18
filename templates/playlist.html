@@ -1,0 +1,196 @@
+{% extends 'base.html' %}
+{% block title %}Playlist - Yoga App{% endblock %}
+
+{% block content %}
+<!-- Optional Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light" style="box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+  <div class="container-fluid">
+    <!-- Logo / Brand -->
+    <a class="navbar-brand" href="{{ url_for('index') }}">
+      <img src="{{ url_for('static', filename='Screenshot (514).png') }}" 
+           alt="Yoga Logo" width="55" height="50" class="d-inline-block align-text-bottom">
+      <span style="color: #A3B290; font-weight: bold;">YogiSync</span>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ms-auto me-4">
+        <li class="nav-item">
+          <a class="nav-link active" href="{{ url_for('index') }}">Home</a> 
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('practice') }}">Workouts</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('show_playlist') }}">Playlist</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('chat') }}">AI-Coach</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<div class="container-fluid text-white p-3" style="background-color: #FFB3A7; padding-top: 50px; opacity: 60%;">
+    <!-- Your banner content here -->
+  </div>
+<div class="container mt-4">
+    <br>
+  <h2>Your Playlist</h2>
+  <br>
+  
+  {% if playlist and playlist|length > 0 %}
+    {# Mapping from pose name to URL slug #}
+    {% set pose_route = {
+      'Warrior Pose': 'warrior',
+      'Raised Hands Pose': 'raised',
+      'Tree Pose': 'tree',
+      'Chair Pose': 'chair',
+      'Plank Pose': 'plank',
+      'Triangle Pose': 'triangle',
+      
+    } %}
+    
+    {# Mapping from pose name to a thumbnail image #}
+    {% set pose_images = {
+      'Warrior Pose': url_for('static', filename='warriorman.jpg'),
+      'Raised Hands Pose': url_for('static', filename='raised hands pose.jpeg'),
+      'Tree Pose': url_for('static', filename='Tree pose 1.jpg'),
+      'Chair Pose': url_for('static', filename='chair pose.jpg'),
+      'Plank Pose': url_for('static', filename='plank pose.jpg'),
+      'Triangle Pose': url_for('static', filename='Triangle pose.jpg')
+    } %}
+    
+    
+    <ul id="playlistList" class="list-unstyled">
+      {% for pose in playlist %}
+      <li 
+  class="playlist-item d-flex align-items-center py-4 px-4 mb-4" 
+  style="background: #fff; border-radius: 10px; box-shadow: 0 3px 5px rgba(0,0,0,0.15), 0 -3px 5px rgba(0,0,0,0.15);" 
+  data-index="{{ loop.index0 }}"
+>
+  <!-- Drag handle on the left -->
+  <span 
+    class="drag-handle material-icons me-4" 
+    style="cursor: grab; font-size: 40px; color: #999;"
+  >
+    drag_indicator
+  </span>
+
+  <!-- Thumbnail -->
+  <img 
+    src="{{ pose_images.get(pose, 'https://via.placeholder.com/100') }}" 
+    alt="Pose Thumbnail"
+    style="width: 130px; height: 130px; object-fit: cover; border-radius: 0px;"
+    class="me-4"
+  >
+
+  <!-- Content area: flex column with space between top row and bottom row -->
+  <div class="flex-grow-1 d-flex flex-column justify-content-between" style="min-height: 130px;">
+    
+    <!-- TOP ROW: Pose name on left, Beginner & 10s on right -->
+    <div class="d-flex justify-content-between align-items-start">
+      <!-- Pose Name -->
+      <div style="font-size: 1.5rem; font-weight: 700;">
+        {{ pose }}
+      </div>
+      <!-- Beginner & 10s -->
+      <div class="d-flex align-items-center gap-3">
+        <span class="badge text-dark" style="background-color: #BEDDF8; font-size: 1rem; padding: 0.5rem 0.8rem; border-radius: 0.5rem;">
+          Beginner
+        </span>
+        <span class="text-secondary d-flex align-items-center" style="font-size: 1rem;">
+          <i class="bi bi-clock me-1"></i> 10 seconds
+        </span>
+      </div>
+    </div>
+
+    <!-- BOTTOM ROW: Learn & Practice Buttons (aligned to bottom-right) -->
+<div class="d-flex gap-2 justify-content-end mt-5">
+    <!-- Learn button -->
+    <a 
+      href="{{ url_for('learn', pose_choice=pose_route.get(pose, pose|lower)) }}"
+      class="btn btn-info"
+      style="font-size: 1rem; padding: 0.5rem 1rem; white-space: nowrap; color: white; background-color: #FF917D; border-color: transparent;"
+    >
+      Learn
+    </a>
+    <!-- Practice button -->
+    <a 
+      href="{{ url_for('video', pose_choice=pose_route.get(pose, pose|lower)) }}"
+      class="btn btn-primary"
+      style="font-size: 1rem; padding: 0.5rem 1rem; white-space: nowrap; color: white; background-color: #FF917D; border-color: transparent;"
+    >
+      Practice
+    </a>
+  </div>
+  
+    
+  </div>
+</li>
+
+
+      {% endfor %}
+    </ul>
+    
+    <!-- Control buttons --> 
+    <button id="startPlaylist" class="btn btn-info mt-3" style="font-size: 1.25rem;color:white ;padding: 0.75rem 1.5rem; background-color: #A3B290; border-color: transparent;">Restart Playlist</button>
+  
+  {% else %}
+    <p style="font-size: 1.25rem;">No poses added yet.</p>
+  {% endif %}
+  
+  <a href="{{ url_for('index') }}" class="btn btn-secondary mt-3" style="font-size: 1.25rem; padding: 0.75rem 1.5rem;">Back to Home</a>
+</div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <!-- jQuery UI for sorting -->
+  <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+  <!-- Material Icons for drag_indicator -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+<br><br><br><br><br><br>
+  <div class="container-fluid text-white p-3" style="background-color: #FFB3A7; padding-top: 50px; opacity: 60%;">
+    <!-- Your banner content here -->
+  </div>
+
+  <script>
+    $(function() {
+      // Make the list sortable using the drag handle
+      $("#playlistList").sortable({
+        handle: ".drag-handle"
+      });
+      $("#playlistList").disableSelection();
+      
+      // When "Update Order" is clicked, send the new order to the server.
+      $("#updateOrder").click(function() {
+        let newOrder = [];
+        $("#playlistList li").each(function() {
+          // Grab the pose name from the first div inside the li
+          newOrder.push($(this).find("div").first().text().trim());
+        });
+        $.ajax({
+          url: "/api/update_playlist_order",
+          method: "POST",
+          contentType: "application/json",
+          data: JSON.stringify({ order: newOrder }),
+          success: function(response) {
+            alert("Playlist order updated!");
+          }
+        });
+      });
+      
+      // Start the playlist from the first item in the list.
+      $("#startPlaylist").click(function() {
+        let firstItemLink = $("#playlistList li:first-child a.btn-primary").attr("href");
+        if (firstItemLink) {
+          window.location.href = firstItemLink;
+        }
+      });
+    });
+  </script>
+{% endblock %}

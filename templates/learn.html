@@ -1,0 +1,327 @@
+{% extends 'base.html' %}
+{% block title %}Learn - Yoga App{% endblock %}
+
+{% block content %}
+<!-- Optional Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light" style="box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+  <div class="container-fluid">
+    <!-- Logo / Brand -->
+    <a class="navbar-brand" href="{{ url_for('index') }}">
+      <img src="{{ url_for('static', filename='Screenshot (514).png') }}" 
+           alt="Yoga Logo" width="55" height="50" class="d-inline-block align-text-bottom">
+      <span style="color: #A3B290; font-weight: bold;">YogiSync</span>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ms-auto me-4">
+        <li class="nav-item">
+          <a class="nav-link active" href="{{ url_for('index') }}">Home</a> 
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('practice') }}">Workouts</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('show_playlist') }}">Playlist</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('chat') }}">AI-Coach</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Banner Section -->
+<div class="container-fluid text-white p-3" style="background-color: #FFB3A7; padding-top: 50px; opacity: 60%;">
+  <!-- Your banner content here -->
+</div>
+
+<!-- Main Container -->
+<div class="container my-5" style="padding-top: 10px;">
+  <div class="row g-4 align-items-stretch">
+    <!-- Left Column: Video and Pose Info (8/12 columns on large screens) -->
+    <div class="col-12 col-lg-7">
+      <div class="card shadow h-100">
+        <div class="card-body d-flex flex-column">
+          <!-- Tutorial Video -->
+          <div class="ratio ratio-16x9 mb-4">
+            {% if pose_choice == 'warrior' %}
+              <iframe src="https://www.youtube.com/embed/Mn6RSIRCV3w?modestbranding=1&rel=0" 
+                      title="Warrior Pose Tutorial" allowfullscreen></iframe>
+            {% elif pose_choice == 'raised' %}
+              <iframe src="https://www.youtube.com/embed/dmTt3q2Bnaw?start=34&modestbranding=1&rel=0" 
+                      title="Raised Hands Pose Tutorial" allowfullscreen></iframe>
+            {% elif pose_choice == 'plank' %}
+            <iframe src="https://www.youtube.com/embed/98FVbpHw8RU" 
+            title="Plank Pose Tutorial" allowfullscreen></iframe>
+            {% elif pose_choice == 'triangle' %}
+              <iframe src="https://www.youtube.com/embed/Cm3PEdNfgfQ" 
+                      title="Triangle Pose Tutorial" allowfullscreen></iframe>
+            {% elif pose_choice == 'chair' %}
+              <iframe src="https://www.youtube.com/embed/tIJp9ySBr1s" 
+                      title="Chair Pose Tutorial" allowfullscreen></iframe>
+            {% elif pose_choice == 'tree' %}
+              <iframe src="https://www.youtube.com/embed/WznvoO68sDw" 
+                      title="Tree Pose Tutorial" allowfullscreen></iframe>
+            {% endif %}
+          </div>
+          <!-- About the Pose Section -->
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h4 class="mb-0">About the Pose</h4>
+            <div class="d-flex align-items-center gap-3">
+              <!-- Difficulty Badge (you may adjust per pose) -->
+              {% if pose_choice in ['warrior', 'raised', 'chair'] %}
+                <div class="badge text-dark" style="background-color: #BEDDF8; font-size: 1rem; padding: 0.5rem 1rem;">Beginner</div>
+              {% else %}
+                <div class="badge text-dark" style="background-color: #BEDDF8; font-size: 1rem; padding: 0.5rem 1rem;">Intermediate</div>
+              {% endif %}
+              <!-- Timer Text (example value) -->
+              {% if pose_choice in ['warrior', 'raised', 'chair'] %}
+                <div class="text-secondary" style="font-size: 1rem;"><i class="bi bi-clock me-1"></i> 10 seconds</div>
+              {% else %}
+                <div class="text-secondary" style="font-size: 1rem;"><i class="bi bi-clock me-1"></i> 15 seconds</div>
+              {% endif %}
+            </div>
+          </div>
+          <!-- Short Description -->
+          <div>
+            {% if pose_choice == 'warrior' %}
+              <p>Warrior Pose builds strength, stability, and balance while opening the hips and chest. Focus on proper alignment and deep breathing.</p>
+            {% elif pose_choice == 'raised' %}
+              <p>Raised Hands Pose stretches and energizes the front body, improving flexibility and posture. Engage your core and breathe steadily.</p>
+            {% elif pose_choice == 'plank' %}
+              <p>Plank Pose strengthens your core, arms, and legs while improving overall stability. Keep your body in a straight line and maintain controlled, deep breaths.</p>
+            {% elif pose_choice == 'triangle' %}
+              <p>Triangle Pose increases flexibility and balance by stretching the legs and torso. Maintain a long spine and steady breathing for optimal benefit.</p>
+            {% elif pose_choice == 'chair' %}
+              <p>Chair Pose challenges your lower body and core, building strength and endurance. Imagine sitting on an invisible chair while keeping your chest lifted.</p>
+            {% elif pose_choice == 'tree' %}
+              <p>Tree Pose enhances balance and concentration. Ground one leg firmly while placing the other foot on your inner thigh and bring your hands together in prayer.</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Right Column: Tabbed Information (4/12 columns on large screens) -->
+    <div class="col-12 col-lg-5">
+      <div class="card shadow h-100">
+        <div class="card-header">
+          <ul class="nav nav-pills card-header-pills" id="learnTab" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="pose-tab" data-bs-toggle="tab" data-bs-target="#pose" type="button" role="tab" aria-controls="pose" aria-selected="true">
+                Practice Tips
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="warmup-tab" data-bs-toggle="tab" data-bs-target="#warmup" type="button" role="tab" aria-controls="warmup" aria-selected="false">
+                Warm Up
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="startpractice-tab" data-bs-toggle="tab" data-bs-target="#startpractice" type="button" role="tab" aria-controls="startpractice" aria-selected="false">
+                Start Practice
+              </button>
+            </li>
+          </ul>
+        </div>
+        <div class="card-body tab-content" id="learnTabContent">
+          <!-- Practice Tips Tab Content -->
+          <div class="tab-pane fade show active" id="pose" role="tabpanel" aria-labelledby="pose-tab">
+            <!-- Practice Instructions -->
+            <div class="card mb-3">
+              <div class="card-body">
+                <h5 class="card-title">Practice Instructions</h5>
+                {% if pose_choice == 'warrior' %}
+                  <p>To practice Warrior Pose, ground your feet firmly, align your front knee over your ankle, and keep your back leg straight. Engage your core and breathe deeply.</p>
+                {% elif pose_choice == 'raised' %}
+                  <p>For Raised Hands Pose, begin with your feet hip-width apart. Slowly raise your arms overhead, elongate your spine, and engage your core. Maintain steady, relaxed breathing.</p>
+                {% elif pose_choice == 'plank' %}
+                  <p>For Plank Pose, place your palms under your shoulders and extend your legs back, forming a straight line from head to heels. Engage your core and focus on controlled, deep breaths.</p>
+                {% elif pose_choice == 'triangle' %}
+                  <p>For Triangle Pose, start with your feet wide apart. Turn one foot outward, extend your arms, and lean over the front leg. Keep your spine long and breathe deeply.</p>
+                {% elif pose_choice == 'chair' %}
+                  <p>For Chair Pose, stand with your feet hip-width apart, then slide down as if sitting on an invisible chair. Keep your chest lifted, engage your core, and breathe steadily.</p>
+                {% elif pose_choice == 'tree' %}
+                  <p>For Tree Pose, shift your weight onto one leg and place the sole of your other foot on your inner thigh. Bring your hands to prayer position and focus on steady, controlled breathing.</p>
+                {% endif %}
+              </div>
+            </div>
+            <!-- Advantages -->
+            <div class="card mb-3">
+              <div class="card-body">
+                <h5 class="card-title">Advantages</h5>
+                {% if pose_choice == 'warrior' %}
+                  <ul>
+                    <li>Improves balance and stability</li>
+                    <li>Strengthens legs and core</li>
+                    <li>Enhances focus</li>
+                  </ul>
+                {% elif pose_choice == 'raised' %}
+                  <ul>
+                    <li>Improves posture and flexibility</li>
+                    <li>Energizes the body</li>
+                    <li>Stretches the chest</li>
+                  </ul>
+                {% elif pose_choice == 'plank' %}
+                  <ul>
+                    <li>Builds core strength</li>
+                    <li>Enhances upper body stability</li>
+                    <li>Improves overall posture</li>
+                  </ul>
+                {% elif pose_choice == 'triangle' %}
+                  <ul>
+                    <li>Increases flexibility in the legs and torso</li>
+                    <li>Enhances balance</li>
+                    <li>Stretches the side body</li>
+                  </ul>
+                {% elif pose_choice == 'chair' %}
+                  <ul>
+                    <li>Strengthens the lower body</li>
+                    <li>Improves core stability</li>
+                    <li>Boosts endurance</li>
+                  </ul>
+                {% elif pose_choice == 'tree' %}
+                  <ul>
+                    <li>Enhances balance and concentration</li>
+                    <li>Strengthens the standing leg</li>
+                    <li>Promotes mindfulness</li>
+                  </ul>
+                {% endif %}
+              </div>
+            </div>
+            <!-- Disadvantages -->
+            <div class="card mb-3">
+              <div class="card-body">
+                <h5 class="card-title">Disadvantages</h5>
+                {% if pose_choice == 'warrior' %}
+                  <ul>
+                    <li>Risk of knee strain if misaligned</li>
+                    <li>Requires focus on form</li>
+                  </ul>
+                {% elif pose_choice == 'raised' %}
+                  <ul>
+                    <li>May strain shoulders if done improperly</li>
+                    <li>Not advised for severe shoulder injuries</li>
+                  </ul>
+                {% elif pose_choice == 'plank' %}
+                  <ul>
+                    <li>Can cause lower back strain if form is poor</li>
+                    <li>Requires significant core strength</li>
+                  </ul>
+                {% elif pose_choice == 'triangle' %}
+                  <ul>
+                    <li>May cause discomfort in the hamstrings</li>
+                    <li>Requires flexibility and balance</li>
+                  </ul>
+                {% elif pose_choice == 'chair' %}
+                  <ul>
+                    <li>Can strain the knees if performed too deeply</li>
+                    <li>Requires good lower body strength</li>
+                  </ul>
+                {% elif pose_choice == 'tree' %}
+                  <ul>
+                    <li>May be challenging for beginners</li>
+                    <li>Requires focus and balance</li>
+                  </ul>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          
+          <!-- Warm Up Tab -->
+          <div class="tab-pane fade" id="warmup" role="tabpanel" aria-labelledby="warmup-tab">
+            <div class="card mb-3">
+              <div class="card-body">
+                <h5 class="card-title mb-3">Warm Up Videos</h5>
+                <div class="accordion" id="warmupAccordion">
+                  <!-- Accordion Item 1 -->
+                  <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingOne">
+                      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne" style="background-color: #ffb3a7; color:white">
+                        Warm Up Video 1
+                      </button>
+                    </h2>
+                    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#warmupAccordion">
+                      <div class="accordion-body">
+                        <div class="ratio ratio-16x9">
+                          <iframe src="https://www.youtube.com/embed/VaoV1PrYft4?modestbranding=1&rel=0" 
+                                  title="Warm Up Video 1" allowfullscreen></iframe>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Accordion Item 2 -->
+                  <div class="accordion-item" style="padding-top: 5px;">
+                    <h2 class="accordion-header" id="headingTwo">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="background-color: #ffb3a7; color:white">
+                        Warm Up Video 2
+                      </button>
+                    </h2>
+                    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#warmupAccordion">
+                      <div class="accordion-body">
+                        <div class="ratio ratio-16x9">
+                          <iframe src="https://www.youtube.com/embed/4pKly2JojMw?modestbranding=1&rel=0" 
+                                  title="Warm Up Video 2" allowfullscreen></iframe>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Accordion Item 3 -->
+                  <div class="accordion-item" style="padding-top: 5px;">
+                    <h2 class="accordion-header" id="headingThree">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree" style="background-color: #ffb3a7; color:white">
+                        Warm Up Video 3
+                      </button>
+                    </h2>
+                    <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#warmupAccordion">
+                      <div class="accordion-body">
+                        <div class="ratio ratio-16x9">
+                          <iframe src="https://www.youtube.com/embed/hNCqIgl7Pjc?modestbranding=1&rel=0" 
+                                  title="Warm Up Video 3" allowfullscreen></iframe>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Start Practice Tab -->
+          <div class="tab-pane fade" id="startpractice" role="tabpanel" aria-labelledby="startpractice-tab">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Get Ready for Live Practice</h5>
+                <p class="card-text">
+                  Before starting your live session, ensure you are in a quiet and spacious area with a yoga mat.
+                  Wear comfortable clothing, have a bottle of water nearby, and clear your space of any distractions.
+                </p>
+                <ul>
+                  <li>Find a calm and quiet space.</li>
+                  <li>Use a yoga mat for stability.</li>
+                  <li>Wear comfortable and flexible clothing.</li>
+                  <li>Focus on deep, relaxed breathing.</li>
+                </ul>
+                <div class="mt-3">
+                  <img src="https://images.pexels.com/photos/4056723/pexels-photo-4056723.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260" class="img-fluid rounded" alt="Practice Setup" style="max-height:300px;">
+                </div>
+                <div class="text-center mt-3">
+                  <a href="{{ url_for('video', pose_choice=pose_choice) }}" class="btn btn-primary" style="background-color: #FF917D; border-color: transparent;">Go to Live Practice</a>
+                </div>
+              </div>
+            </div>
+          </div> <!-- end Start Practice tab -->
+        </div> <!-- end card-body tab-content -->
+      </div> <!-- end card shadow h-100 -->
+    </div> <!-- end col -->
+    
+  </div> <!-- end row -->
+</div> <!-- end container -->
+<div class="container-fluid text-white p-3" style="background-color: #FFB3A7; padding-top: 50px; opacity: 60%;">
+  <!-- Your banner content here -->
+</div>
+{% endblock %}

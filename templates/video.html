@@ -1,0 +1,418 @@
+{% extends 'base.html' %}
+{% block title %}Practice - Live Detection{% endblock %}
+
+{% block content %}
+<!-- Optional Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light" style="box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{{ url_for('index') }}">
+      <img src="{{ url_for('static', filename='Screenshot (514).png') }}" 
+           alt="Yoga Logo" width="55" height="50" class="d-inline-block align-text-bottom">
+      <span style="color: #A3B290; font-weight: bold;">YogiSync</span>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ms-auto me-4">
+        <li class="nav-item"><a class="nav-link active" href="{{ url_for('index') }}">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('practice') }}">Workouts</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('show_playlist') }}">Playlist</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('chat') }}">AI-Coach</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container-fluid text-white p-3" style="background-color: #FFB3A7; padding-top: 50px; opacity: 60%;">
+  <!-- Your banner content here -->
+</div>
+
+<!-- Main Container -->
+<div class="container my-5">
+  <div class="row">
+    <!-- Left Column: Instructions and Visual -->
+    <div class="col-lg-6 mb-4">
+      <div class="card shadow">
+        <div class="card-header text-white" style="background-color: #A3B290;">
+          <h4 class="mb-0">
+            {% if pose_choice == 'warrior' %}
+              Warrior Pose Instructions
+            {% elif pose_choice == 'raised' %}
+              Raised Hands Pose Instructions
+            {% elif pose_choice == 'plank' %}
+              Plank Pose Instructions
+            {% elif pose_choice == 'triangle' %}
+              Triangle Pose Instructions
+            {% elif pose_choice == 'chair' %}
+              Chair Pose Instructions
+            {% elif pose_choice == 'tree' %}
+              Tree Pose Instructions
+            {% else %}
+              Pose Instructions
+            {% endif %}
+          </h4>
+        </div>
+        <div class="card-body">
+          {% if pose_choice == 'warrior' %}
+            <ol>
+              <li>Stand with your feet wide apart.</li>
+              <li>Turn your right foot out 90° and your left foot slightly in.</li>
+              <li>Bend your right knee, keeping it directly above your ankle.</li>
+              <li>Extend your arms to the sides, parallel to the floor.</li>
+              <li>Hold the pose and focus on your breathing.</li>
+            </ol>
+          {% elif pose_choice == 'raised' %}
+            <ol>
+              <li>Stand upright with your feet hip-width apart.</li>
+              <li>Raise both arms overhead slowly.</li>
+              <li>Keep your shoulders relaxed and engage your core.</li>
+              <li>Ensure your arms are straight and aligned.</li>
+              <li>Hold the pose while breathing deeply.</li>
+            </ol>
+          {% elif pose_choice == 'plank' %}
+            <ol>
+              <li>Start in a push-up position with your hands under your shoulders.</li>
+              <li>Keep your body in a straight line from head to heels.</li>
+              <li>Engage your core and glutes throughout the pose.</li>
+              <li>Hold the position while maintaining steady breathing.</li>
+            </ol>
+          {% elif pose_choice == 'triangle' %}
+            <ol>
+              <li>Stand with your feet wide apart.</li>
+              <li>Turn your right foot out 90° and your left foot slightly in.</li>
+              <li>Extend your right arm toward your right leg and your left arm upward.</li>
+              <li>Lower your right hand to your shin or the floor while keeping your torso open.</li>
+              <li>Hold the pose while focusing on balance and deep breathing.</li>
+            </ol>
+          {% elif pose_choice == 'chair' %}
+            <ol>
+              <li>Stand with your feet hip-width apart.</li>
+              <li>Bend your knees and lower your hips as if sitting in a chair.</li>
+              <li>Raise your arms upward parallel to each other.</li>
+              <li>Keep your back straight and core engaged.</li>
+              <li>Hold the pose and breathe steadily.</li>
+            </ol>
+          {% elif pose_choice == 'tree' %}
+            <ol>
+              <li>Stand upright and shift your weight onto one leg.</li>
+              <li>Place the sole of your other foot against your inner thigh or calf.</li>
+              <li>Bring your hands together in a prayer position at your chest.</li>
+              <li>Focus on a fixed point to maintain balance.</li>
+              <li>Hold the pose while breathing calmly.</li>
+            </ol>
+          {% else %}
+            <p>Please follow the on-screen instructions for the selected pose.</p>
+          {% endif %}
+          {% set pose_images = {
+            'Warrior Pose': url_for('static', filename='warriorman.jpg'),
+            'Raised Hands Pose': url_for('static', filename='raised hands pose.jpeg'),
+            'Tree Pose': url_for('static', filename='Tree pose 1.jpg'),
+            'Chair Pose': url_for('static', filename='chair pose.jpg'),
+            'Plank Pose': url_for('static', filename='plank pose.jpg'),
+            'Triangle Pose': url_for('static', filename='Triangle pose.jpg')
+          } %}
+          
+          {# If your pose_choice is a slug (e.g., 'warrior') instead of the full pose name, create a mapping #}
+          {% set pose_mapping = {
+            'warrior': 'Warrior Pose',
+            'raised': 'Raised Hands Pose',
+            'plank': 'Plank Pose',
+            'triangle': 'Triangle Pose',
+            'chair': 'Chair Pose',
+            'tree': 'Tree Pose'
+          } %}
+          
+          <!-- Additional Image (always shown) -->
+          <div class="mt-4 p-3 border rounded shadow-sm">
+            <img src="{{ pose_images[pose_mapping[pose_choice]] }}" 
+                 alt="Pose Visual" class="img-fluid rounded">
+          </div>
+          
+        </div>
+      </div>
+    </div>
+    
+    <!-- Right Column: Live Pose Detection -->
+    <div class="col-lg-6">
+      <div class="card shadow">
+        <div class="card-header text-white" style="background-color: #A3B290;">
+          <h4 class="mb-0">Live Pose Detection</h4>
+        </div>
+        <div class="card-body text-center">
+          <!-- Video Feed Container with Loading Overlay -->
+          <div id="videoContainer" class="mb-3" style="display:none; position: relative; ">
+            <!-- Loading Overlay -->
+            <div id="loadingOverlay" style="
+              position: absolute;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100%;
+              background: rgba(255, 255, 255, 0.95);
+              z-index: 1000;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              flex-direction: column;
+              border-radius: 0.375rem;">
+             
+              <p class="mt-2 text-muted">Initializing Camera Feed...</p>
+            </div>
+            <!-- Video Feed -->
+            <img id="videoFeed" src="" class="img-fluid rounded" alt="Video Feed" style="display: none; position: relative; z-index: 1;">
+          </div>
+
+<!-- Give the icon an ID -->
+<div class="d-flex flex-column align-items-center justify-content-center my-4">
+  <i id="cameraIcon" class="bi bi-camera" style="font-size: 6rem;"></i>
+  <button id="startPractice" 
+          class="btn mt-3" 
+          style="background-color: #BEDDF8; border-color: transparent; color: #000000;">
+    Start Practice
+  </button>
+</div>
+
+
+           
+          <!-- Timer Progress Bar (hidden initially) -->
+          <div id="timerProgress" class="progress mb-3" style="height: 25px; display: none;">
+            <div id="timerBar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" 
+                 style="width: 100%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
+              10.0 s
+            </div>
+          </div>
+          
+          <!-- Message Display -->
+          <div id="messageDisplay" class="mb-3 fw-bold" aria-live="polite"></div>
+          
+          <!-- Success Card (hidden initially) -->
+          <div id="successCard" class="card" style="display: none;">
+            <div class="card-body">
+              <h4 class="card-title">Great job!</h4>
+              <p class="card-text">You held the pose correctly.</p>
+              <div class="d-flex justify-content-center gap-3">
+                <button id="practiceAgain" class="btn btn-primary">Practice Again</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Persistent Back Button in Footer -->
+        <div class="card-footer text-end py-3">
+          <a href="{{ url_for('practice') }}" class="btn" id="backBtn" 
+             style="background-color: #FF917D; border-color: transparent; color: white;">
+            Back to Poses
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container-fluid text-white p-3" style="background-color: #FFB3A7; padding-top: 50px; opacity: 60%;">
+  <!-- Your banner content here -->
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  
+  // Reset state on document ready.
+  $(document).ready(function() {
+    timer = 10.0;
+    cameraEnabled = false;
+    streamStopped = false;
+    startTime = 0;
+  });
+  let timer = 10.0;
+  let countdownInterval = null;
+  let cameraEnabled = false;
+  let streamStopped = false;
+  let startTime = 0;
+  const poseChoice = "{{ pose_choice }}";
+  const videoFeedUrl = "{{ url_for('video_feed', pose_choice=pose_choice) }}";
+
+  // --- Auto-transition Setup ---
+  {% if pose_index is defined and playlist is defined %}
+    var currentIndex = {{ pose_index }};
+    var playlistLength = {{ playlist|length }};
+    function goToNextWorkout() {
+      if (currentIndex + 1 < playlistLength) {
+        window.location.href = "{{ url_for('start_practice', pose_index='NEXT') }}".replace('NEXT', currentIndex + 1);
+      } else {
+        window.location.href = "{{ url_for('practice') }}";
+      }
+    }
+  {% endif %}
+
+  // Function to stop the stream properly.
+  // 'showSuccess' indicates whether to display the success UI.
+  function stopStream(showSuccess) {
+    clearInterval(countdownInterval);
+    fetch("/stop_stream", { method: "POST" })
+      .then(response => response.json())
+      .then(data => {
+        streamStopped = true;
+        $("#videoContainer").hide();
+        $("#timerProgress").hide();
+        if (showSuccess && timer <= 0) {
+          $("#successCard").fadeIn();
+          {% if pose_index is defined and playlist is defined %}
+            console.log("Auto-playing next workout in 3 seconds.");
+            setTimeout(goToNextWorkout, 3000);
+          {% endif %}
+        } else {
+          $("#messageDisplay").text("");
+        }
+      })
+      .catch(error => console.error("Error stopping stream:", error));
+  }
+
+  // Function to update pose info and control timer.
+  function updatePoseInfo() {
+    $.getJSON("/pose_info", function(data) {
+      console.log("Received pose_info:", data);
+      const elapsed = Date.now() - startTime;
+      
+      if (data.pose_text && data.pose_text.trim() !== "No Pose Detected") {
+        if (data.correct) {
+          if (elapsed >= 2000) {
+            $("#messageDisplay").text(data.accuracy_text);
+          }
+          if (timer > 0) {
+            timer -= 1.0;
+            if (timer < 0) timer = 0;
+          }
+        } else {
+          if (elapsed >= 2000) {
+            $("#messageDisplay").text("Please perform the pose correctly!");
+          }
+        }
+      } else {
+        $("#messageDisplay").text("");
+      }
+      
+      let progressPercent = (timer / 10.0) * 100;
+      $("#timerBar").css("width", progressPercent + "%")
+                   .attr("aria-valuenow", progressPercent)
+                   .text(Math.max(timer, 0).toFixed(1) + " s");
+      
+      if (timer <= 0 && !streamStopped) stopStream(true);
+    }).fail(function() {
+      $("#messageDisplay").text("Error fetching pose data. Please try again.");
+    });
+  }
+
+  // Start Practice Button click event.
+  $("#startPractice").on("click", function() {
+  if (!cameraEnabled) {
+    // Hide the camera icon
+    $("#cameraIcon").hide();
+
+    $("#videoContainer").show();
+    $("#loadingOverlay").show();
+    const videoElement = $("#videoFeed");
+    videoElement.attr("src", videoFeedUrl)
+      .on("load", function() {
+        $("#loadingOverlay").hide();
+        videoElement.show();
+        $("#timerProgress").show();
+        cameraEnabled = true;
+        streamStopped = false;
+        startTime = Date.now();
+        countdownInterval = setInterval(updatePoseInfo, 500);
+      })
+      .on("error", function() {
+        $("#loadingOverlay").hide();
+        $("#messageDisplay").text("Unable to start camera. Please check permissions.");
+        $("#startPractice").prop("disabled", false);
+      });
+    $(this).remove(); // Remove the Start Practice button after click.
+  }
+});
+
+
+  // Practice Again Button: reset state and re-add the Start Practice button.
+  $("#practiceAgain").on("click", function() {
+    clearInterval(countdownInterval); // Stop any existing timer
+
+    fetch("/stop_stream", { method: "POST" }) // Stop the previous video stream
+        .then(response => response.json())
+        .then(() => {
+            console.log("Stream stopped successfully. Resetting UI...");
+            
+            timer = 10.0;
+            cameraEnabled = false;
+            streamStopped = false;
+            $("#successCard").hide();
+            $("#videoContainer").hide();
+            $("#timerProgress").hide();
+            $("#messageDisplay").text("");
+
+            // Reset video source properly
+            $("#videoFeed").hide().attr("src", "");
+
+            // Ensure the start button is present
+            if (!$("#startPractice").length) {
+                $(".card-body.text-center").prepend('<button id="startPractice" class="btn btn-primary mb-3">Start Practice</button>');
+            }
+
+            // Delay before restarting the camera
+            setTimeout(() => {
+                $("#startPractice").off("click").on("click", function() {
+                    if (!cameraEnabled) {
+                        console.log("Starting new camera session...");
+                        $("#videoContainer").show();
+                        $("#loadingOverlay").show();
+
+                        const videoElement = $("#videoFeed");
+                        videoElement.attr("src", videoFeedUrl)
+                            .on("load", function() {
+                                $("#loadingOverlay").hide();
+                                videoElement.show();
+                                $("#timerProgress").show();
+                                cameraEnabled = true;
+                                streamStopped = false;
+                                startTime = Date.now();
+                                countdownInterval = setInterval(updatePoseInfo, 500);
+                            })
+                            .on("error", function() {
+                                $("#loadingOverlay").hide();
+                                $("#messageDisplay").text("Unable to start camera. Please check permissions.");
+                                $("#startPractice").prop("disabled", false);
+                            });
+
+                        $(this).remove(); // Remove button after starting
+                    }
+                });
+            }, 1000); // Small delay before restarting
+        })
+        .catch(error => {
+            console.error("Error stopping stream:", error);
+            $("#messageDisplay").text("Error resetting camera. Please refresh and try again.");
+        });
+  });
+
+  // Back Button: stop stream and redirect without success.
+  $("#backBtn").on("click", function(e) {
+    e.preventDefault();
+    clearInterval(countdownInterval);
+    fetch("/stop_stream", { method: "POST" })
+      .catch(error => console.error("Error stopping stream:", error))
+      .finally(() => {
+        window.location.href = "{{ url_for('practice') }}";
+      });
+  });
+
+  // Ensure stream stops when the page unloads.
+  window.addEventListener("beforeunload", function() {
+    if (cameraEnabled && !streamStopped) stopStream(false);
+  });
+
+  // --- TTS Stop on Page Unload ---
+  window.addEventListener("beforeunload", function () {
+      navigator.sendBeacon("/stop_tts");
+  });
+</script>
+{% endblock %}
